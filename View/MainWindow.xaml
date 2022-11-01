@@ -10,6 +10,7 @@
         Background="{DynamicResource MaterialDesignPaper}"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}">
     <Grid>
-
+        <ContentControl Content="{Binding SelectedViewModel}"></ContentControl>
+        <Label Content="{Binding Message}" Foreground="OrangeRed" HorizontalAlignment="Right" VerticalAlignment="Bottom"></Label>
     </Grid>
 </Window>

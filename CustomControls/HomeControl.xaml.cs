@@ -1,5 +1,4 @@
-﻿using MSSM_Clone.ViewModel;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,17 +13,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace MSSM_Clone.View
+namespace MSSM_Clone.CustomControls
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for HomeControl.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class HomeControl : UserControl
     {
-        public MainWindow()
+        public HomeControl()
         {
             InitializeComponent();
-            this.DataContext = new MainViewModel();
         }
     }
 }
