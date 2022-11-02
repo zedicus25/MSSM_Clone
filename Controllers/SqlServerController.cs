@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Windows.Controls;
 
 namespace MSSM_Clone.Controllers
 {
@@ -12,7 +13,29 @@ namespace MSSM_Clone.Controllers
 
         public SqlServerController(string serverName, string dataBaseName)
         {
-           CreateConnectionPath(serverName, dataBaseName);
+            CreateConnectionPath(serverName, dataBaseName);
+            GetAllTablesNames();
+        }
+
+
+        public List<string> GetAllTablesNames()
+        {
+            using (SqlConnection con = new SqlConnection(_connectionPath))
+            {
+                con.Open();
+                using (SqlCommand com = new SqlCommand("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES", con))
+                {
+                    using (SqlDataReader reader = com.ExecuteReader())
+                    {
+                        List<string> names = new List<string>();
+                        while (reader.Read())
+                        {
+                            names.Add((string)reader["TABLE_NAME"]);
+                        }
+                        return names;
+                    }
+                }
+            }
         }
 
         public List<List<object>> GetFieldsData(string tableName)

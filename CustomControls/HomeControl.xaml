@@ -7,7 +7,15 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <DataGrid Margin="150 5 5 5" x:Name="dataGrid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <ComboBox x:Name="namesComboBox"  VerticalAlignment="Top" Margin="5 5">
+        </ComboBox>
+        <DataGrid Grid.Column="1" Grid.ColumnSpan="3" Margin="5 5 5 5" x:Name="dataGrid">
         </DataGrid>
         
     </Grid>
