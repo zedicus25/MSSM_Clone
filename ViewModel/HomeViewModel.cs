@@ -8,5 +8,9 @@ namespace MSSM_Clone.ViewModel
 {
     public class HomeViewModel : BaseViewModel
     {
+        public HomeViewModel()
+        {
+
+        }
     }
 }

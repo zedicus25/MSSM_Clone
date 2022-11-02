@@ -15,24 +15,7 @@ namespace MSSM_Clone.Controllers
            CreateConnectionPath(serverName, dataBaseName);
         }
 
-        public Dictionary<string, List<object>> GetDataFromTable(string tableName)
-        {
-            Dictionary<string, List<object>> data = new Dictionary<string, List<object>>();
-            List<string> names = GetFieldsName(tableName);
-            List<List<object>> rowValues = GetFieldsData(tableName);
-            for (int i = 0; i < names.Count; i++)
-            {
-                List<object> collumValues = new List<object>();
-                for (int j = 0; j < rowValues.Count; j++)
-                {
-                    collumValues.Add(rowValues[j][i]);
-                }
-                data.Add(names[i], collumValues);
-            }
-            return data;
-        }
-
-        private List<List<object>> GetFieldsData(string tableName)
+        public List<List<object>> GetFieldsData(string tableName)
         {
             try
             {
@@ -60,7 +43,7 @@ namespace MSSM_Clone.Controllers
             return new List<List<object>>();
         }
 
-        private List<string> GetFieldsName(string tableName)
+        public List<string> GetFieldsName(string tableName)
         {
             try
             {
@@ -79,8 +62,6 @@ namespace MSSM_Clone.Controllers
                         return names;
                     }
                 }
-                    
-              
             }
             catch (Exception ex) 
             {
