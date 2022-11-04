@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Text;
 using System.Windows.Controls;
 
 namespace MSSM_Clone.Controllers
@@ -30,6 +31,7 @@ namespace MSSM_Clone.Controllers
                         List<string> names = new List<string>();
                         while (reader.Read())
                         {
+
                             names.Add((string)reader["TABLE_NAME"]);
                         }
                         return names;
@@ -38,26 +40,63 @@ namespace MSSM_Clone.Controllers
             }
         }
 
+
+        public void InsertDataToDataBase(string tableName, Dictionary<string, string> data)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append($"INSERT INTO [dbo].[{tableName}](");
+            foreach (var item in data)
+            {
+                if (!item.Key.Contains("id") && !item.Key.Contains("Id"))
+                    sb.Append($"[{item.Key}],");
+            }
+            sb.Remove(sb.Length - 1, 1);
+            sb.Append(") VALUES(");
+            foreach (var item in data)
+            {
+                if (!item.Key.Contains("id") && !item.Key.Contains("Id"))
+                    sb.Append($"'{item.Value}',");
+            }
+            sb.Remove(sb.Length - 1, 1);
+            sb.Append(");");
+            using (SqlConnection con = new SqlConnection(_connectionPath))
+            {
+                con.Open();
+                using (SqlCommand command = new SqlCommand(sb.ToString(), con))
+                {
+                    if (command.ExecuteNonQuery() > 0)
+                        SendMessage?.Invoke("Added!");
+                    else
+                        SendMessage?.Invoke("Not Added!");
+                }
+            }
+           
+        }
+
         public List<List<object>> GetFieldsData(string tableName)
         {
             try
             {
-                SqlConnection connection = GetSqlConnection();
-                connection.Open();
-                string command = $"SELECT * FROM [{tableName}]";
-                SqlCommand sqlCommand = GetSqlCommand(connection, command);
-                List<List<object>> fieldsData = new List<List<object>>();
-                SqlDataReader sqlData = sqlCommand.ExecuteReader();
-                while (sqlData.Read())
+                using (SqlConnection connection = GetSqlConnection())
                 {
-                    List<object> fields = new List<object>();
-                    for (int i = 0; i < sqlData.FieldCount; i++)
+                    connection.Open();
+                    string command = $"SELECT * FROM [{tableName}]";
+                    using (SqlCommand sqlCommand = GetSqlCommand(connection, command))
                     {
-                        fields.Add(sqlData.GetValue(i));
+                        List<List<object>> fieldsData = new List<List<object>>();
+                        SqlDataReader sqlData = sqlCommand.ExecuteReader();
+                        while (sqlData.Read())
+                        {
+                            List<object> fields = new List<object>();
+                            for (int i = 0; i < sqlData.FieldCount; i++)
+                            {
+                                fields.Add(sqlData.GetValue(i));
+                            }
+                            fieldsData.Add(fields);
+                        }
+                        return fieldsData;
                     }
-                    fieldsData.Add(fields);
                 }
-                return fieldsData;
             }
             catch (Exception ex)
             {

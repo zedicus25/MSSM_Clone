@@ -34,10 +34,9 @@ namespace MSSM_Clone.ViewModel
             {
                 return _loginCommand ?? (_loginCommand = new RelayCommand(() =>
                 {
-                    if(_serverName != String.Empty && _databaseName != String.Empty)
+                    if(_serverName != String.Empty & _databaseName != String.Empty)
                     {
-                        MainViewModel.Instance.CreateSqlController(_serverName, _databaseName);
-                       
+                        MainViewModel.GetInstance().CreateSqlController(_serverName, _databaseName);
                     }
                 }));
             }
@@ -46,9 +45,9 @@ namespace MSSM_Clone.ViewModel
         private void ConnectionResult(bool res)
         {
             if (res)
-                MainViewModel.Instance.ChangeViewModel(new HomeViewModel());
+                MainViewModel.GetInstance().ChangeViewModel(new HomeViewModel());
             else
-                MainViewModel.Instance.SendMessageToView("Cannot connect to server or database");
+                MainViewModel.GetInstance().SendMessageToView("Cannot connect to server or database");
         }
 
         public LoginViewModel()

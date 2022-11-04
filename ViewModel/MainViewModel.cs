@@ -1,12 +1,22 @@
 ﻿using MSSM_Clone.Controllers;
+using System.Data.SqlClient;
 
 namespace MSSM_Clone.ViewModel
 {
     public class MainViewModel : BaseViewModel
     {
-        public static MainViewModel Instance { get; private set; }
+        public static MainViewModel GetInstance()
+        {
+            if (_instance == null)
+            {
+                _instance = new MainViewModel();
 
-		public SqlServerController ServerContoller => _sqlServerController;
+            }
+            return _instance;
+        }
+        private static MainViewModel _instance;
+
+        public SqlServerController ServerContoller => _sqlServerController;
 
 		
 
@@ -35,13 +45,11 @@ namespace MSSM_Clone.ViewModel
         private SqlServerController _sqlServerController;
         private string _message;
 
-        public MainViewModel()
+        private MainViewModel()
 		{
-			if (Instance == null)
-				Instance = this;
             SqlServerController.SendMessage += SendMessageToView;
             SelectedViewModel = new LoginViewModel();
-		}
+        }
 
 
 

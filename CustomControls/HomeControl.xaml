@@ -13,10 +13,22 @@
             <ColumnDefinition></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
         <ComboBox x:Name="namesComboBox"  VerticalAlignment="Top" Margin="5 5">
         </ComboBox>
-        <DataGrid Grid.Column="1" Grid.ColumnSpan="3" Margin="5 5 5 5" x:Name="dataGrid">
+        <DataGrid Grid.RowSpan="2" Grid.Column="1" Grid.ColumnSpan="3" Margin="5 5 5 5" x:Name="dataGrid">
         </DataGrid>
-        
+        <Button Command="{Binding AddData}" Grid.Row="3" VerticalAlignment="Bottom" Margin="10"
+            Style="{StaticResource MaterialDesignRaisedButton}"
+            ToolTip="Resource name: MaterialDesignRaisedButton"
+            Content="Add data"/>
+
+        <StackPanel x:Name="inputPanel" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3">
+            
+        </StackPanel>
     </Grid>
 </UserControl>

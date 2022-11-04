@@ -22,15 +22,28 @@ namespace MSSM_Clone.CustomControls
     /// </summary>
     public partial class HomeControl : UserControl
     {
+        private string _selectedTable;
         public HomeControl()
         {
             InitializeComponent();
             CreateCombox();
+            HomeViewModel.StartAddingData += this.HomeControl_StartAddingData;
+        }
+
+        private void HomeControl_StartAddingData()
+        {
+            Dictionary<string, string> data = new Dictionary<string, string>();
+            foreach (var item in inputPanel.Children)
+            {
+                data.Add((item as TextBox).Name, (item as TextBox).Text);
+            }
+            MainViewModel.GetInstance().ServerContoller.InsertDataToDataBase(_selectedTable, data);
+
         }
 
         private void CreateCombox()
         {
-            var names = MainViewModel.Instance.ServerContoller.GetAllTablesNames();
+            var names = MainViewModel.GetInstance().ServerContoller.GetAllTablesNames();
             for (int i = 0; i < names.Count; i++)
             {
                 ComboBoxItem boxItem = new ComboBoxItem();
@@ -45,6 +58,7 @@ namespace MSSM_Clone.CustomControls
         {
             object name = (sender as ComboBoxItem).Content;
             CreateTable(name as string);
+            _selectedTable = name as string;
         }
 
         //DESKTOP-GLH25AE\SQLEXPRESS
@@ -52,9 +66,10 @@ namespace MSSM_Clone.CustomControls
         private void CreateTable(string table)
         {
             dataGrid.Columns.Clear();
+            dataGrid.IsReadOnly = true;
             dataGrid.AutoGenerateColumns = false;
-            var data = MainViewModel.Instance.ServerContoller.GetFieldsData(table);
-            var names = MainViewModel.Instance.ServerContoller.GetFieldsName(table);
+            var data = MainViewModel.GetInstance().ServerContoller.GetFieldsData(table);
+            var names = MainViewModel.GetInstance().ServerContoller.GetFieldsName(table);
 
             for (int j = 0; j < data[0].Count; j++)
             {
@@ -63,7 +78,22 @@ namespace MSSM_Clone.CustomControls
                 column.Binding = new Binding($"[{j}]");
                 dataGrid.Columns.Add(column);
             }
-            dataGrid.ItemsSource = data; 
+            dataGrid.ItemsSource = data;
+            CreateInputPanel(names);
+        }
+
+        private void CreateInputPanel(List<string> names)
+        {
+            inputPanel.Children.Clear();
+            for (int i = 0; i < names.Count; i++)
+            {
+                TextBox tb = new TextBox();
+                tb.Text = names[i];
+                tb.ToolTip = names[i];
+                tb.Name = names[i];
+                tb.Margin = new Thickness(10);
+                inputPanel.Children.Add(tb);
+            }
         }
     }
 }
