@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Text;
 using System.Windows.Controls;
@@ -31,7 +32,6 @@ namespace MSSM_Clone.Controllers
                         List<string> names = new List<string>();
                         while (reader.Read())
                         {
-
                             names.Add((string)reader["TABLE_NAME"]);
                         }
                         return names;
@@ -43,7 +43,39 @@ namespace MSSM_Clone.Controllers
 
         public void InsertDataToDataBase(string tableName, Dictionary<string, string> data)
         {
-            StringBuilder sb = new StringBuilder();
+
+            using (SqlConnection connection = new SqlConnection(_connectionPath))
+            {
+                connection.Open();
+                string command = $"SELECT * FROM [{tableName}]";
+                using (SqlCommand sqlCommand = GetSqlCommand(connection, command))
+                {
+                    SqlDataReader sqlData = sqlCommand.ExecuteReader();
+                    
+                    DataTable dataTable = sqlData.GetSchemaTable();
+                    List<string> keysForRemove = new List<string>();
+                    int i = 0;
+                    while (sqlData.Read())
+                    {
+                        keysForRemove.Add(dataTable.Columns[i].ColumnName);
+                            i++;
+                    }
+                    
+                    /*foreach (DataColumn column in dataTable.Columns)
+                    {
+                        if(column.ColumnName.Equals("shipperid"))
+                            keysForRemove.Add("1");
+                    }*/
+                    /*foreach (var item in data)
+                    {
+                        if (dataTable.Columns[0].AutoIncrement)
+
+                    }*/
+                }
+            }
+
+
+            /*StringBuilder sb = new StringBuilder();
             sb.Append($"INSERT INTO [dbo].[{tableName}](");
             foreach (var item in data)
             {
@@ -69,8 +101,8 @@ namespace MSSM_Clone.Controllers
                     else
                         SendMessage?.Invoke("Not Added!");
                 }
-            }
-           
+            }*/
+
         }
 
         public List<List<object>> GetFieldsData(string tableName)
@@ -125,20 +157,20 @@ namespace MSSM_Clone.Controllers
                     }
                 }
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 SendMessage?.Invoke(ex.Message);
             }
             return new List<string>();
         }
-       
+
 
         private void CreateConnectionPath(string serverName, string dataBaseName)
         {
             _connectionPath = TryCreateConnectionPath(serverName, dataBaseName);
             try
             {
-                using(SqlConnection connection = GetSqlConnection())
+                using (SqlConnection connection = GetSqlConnection())
                 {
                     try
                     {
