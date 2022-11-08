@@ -50,59 +50,20 @@ namespace MSSM_Clone.Controllers
                 string command = $"SELECT * FROM [{tableName}]";
                 using (SqlCommand sqlCommand = GetSqlCommand(connection, command))
                 {
-                    SqlDataReader sqlData = sqlCommand.ExecuteReader();
-                    
-                    DataTable dataTable = sqlData.GetSchemaTable();
-                    List<string> keysForRemove = new List<string>();
-                    int i = 0;
-                    while (sqlData.Read())
+                    SqlDataAdapter sqlData = new SqlDataAdapter(sqlCommand);
+                    DataSet dt = new DataSet();
+                    sqlData.Fill(dt);
+                    DataTable table = dt.Tables[0];
+                    DataRow dataRow = table.NewRow();
+                    foreach (var key in data)
                     {
-                        keysForRemove.Add(dataTable.Columns[i].ColumnName);
-                            i++;
+                        dataRow[key.Key] = key.Value;
                     }
-                    
-                    /*foreach (DataColumn column in dataTable.Columns)
-                    {
-                        if(column.ColumnName.Equals("shipperid"))
-                            keysForRemove.Add("1");
-                    }*/
-                    /*foreach (var item in data)
-                    {
-                        if (dataTable.Columns[0].AutoIncrement)
-
-                    }*/
+                    table.Rows.Add(dataRow);
+                    SqlCommandBuilder sqlCommandBuilder = new SqlCommandBuilder(sqlData);
+                    sqlData.Update(dt);
                 }
             }
-
-
-            /*StringBuilder sb = new StringBuilder();
-            sb.Append($"INSERT INTO [dbo].[{tableName}](");
-            foreach (var item in data)
-            {
-                if (!item.Key.Contains("id") && !item.Key.Contains("Id"))
-                    sb.Append($"[{item.Key}],");
-            }
-            sb.Remove(sb.Length - 1, 1);
-            sb.Append(") VALUES(");
-            foreach (var item in data)
-            {
-                if (!item.Key.Contains("id") && !item.Key.Contains("Id"))
-                    sb.Append($"'{item.Value}',");
-            }
-            sb.Remove(sb.Length - 1, 1);
-            sb.Append(");");
-            using (SqlConnection con = new SqlConnection(_connectionPath))
-            {
-                con.Open();
-                using (SqlCommand command = new SqlCommand(sb.ToString(), con))
-                {
-                    if (command.ExecuteNonQuery() > 0)
-                        SendMessage?.Invoke("Added!");
-                    else
-                        SendMessage?.Invoke("Not Added!");
-                }
-            }*/
-
         }
 
         public List<List<object>> GetFieldsData(string tableName)
