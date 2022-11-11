@@ -8,6 +8,7 @@ namespace MSSM_Clone.ViewModel
         public static event Action StartAddingData;
         public static event Action StartUpdatingData;
         public static event Action StartDeletingData;
+        public static event Action RefreshindgData;
         public RelayCommand AddData
         {
             get
@@ -42,6 +43,17 @@ namespace MSSM_Clone.ViewModel
             }
         }
         private RelayCommand _deleteData;
+        public RelayCommand RefreshData
+        {
+            get
+            {
+                return _refreshData ?? (_refreshData = new RelayCommand(() =>
+                {
+                    RefreshindgData?.Invoke();
+                }));
+            }
+        }
+        private RelayCommand _refreshData;
 
         public HomeViewModel()
         {

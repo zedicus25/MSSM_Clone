@@ -70,38 +70,6 @@ namespace MSSM_Clone.Controllers
             }
         }
 
-        /*public List<List<object>> GetFieldsData(string tableName)
-        {
-            try
-            {
-                using (SqlConnection connection = GetSqlConnection())
-                {
-                    connection.Open();
-                    string command = $"SELECT * FROM [{tableName}]";
-                    using (SqlCommand sqlCommand = GetSqlCommand(connection, command))
-                    {
-                        List<List<object>> fieldsData = new List<List<object>>();
-                        SqlDataReader sqlData = sqlCommand.ExecuteReader();
-                        while (sqlData.Read())
-                        {
-                            List<object> fields = new List<object>();
-                            for (int i = 0; i < sqlData.FieldCount; i++)
-                            {
-                                fields.Add(sqlData.GetValue(i));
-                            }
-                            fieldsData.Add(fields);
-                        }
-                        return fieldsData;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                SendMessage?.Invoke(ex.Message);
-            }
-            return new List<List<object>>();
-        }*/
-
         public List<string> GetFieldsName(string tableName)
         {
             try
@@ -129,7 +97,23 @@ namespace MSSM_Clone.Controllers
             return new List<string>();
         }
 
+        public void DeleteData(string tableName,object id)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionPath))
+            {
+                connection.Open();
+                string command = $"SELECT * FROM [{tableName}]";
 
+                SqlDataAdapter adapter = new SqlDataAdapter(command, connection);
+                DataSet dataSet = new DataSet();
+                adapter.Fill(dataSet);
+                DataTable table = dataSet.Tables[0];
+                table.AsEnumerable().FirstOrDefault(x => x[0].Equals(id)).Delete();
+
+                SqlCommandBuilder sqlCommandBuilder = new SqlCommandBuilder(adapter);
+                adapter.Update(dataSet);
+            }
+        }
 
         public DataTable GetTable(string tableName)
         {

@@ -24,7 +24,6 @@ namespace MSSM_Clone.CustomControls
     public partial class HomeControl : UserControl
     {
         private string _selectedTable;
-        private string _lastTable;
         public HomeControl()
         {
             InitializeComponent();
@@ -32,15 +31,28 @@ namespace MSSM_Clone.CustomControls
             HomeViewModel.StartAddingData += this.HomeControl_StartAddingData;
             HomeViewModel.StartUpdatingData += this.HomeViewModel_StartUpdatingData;
             HomeViewModel.StartDeletingData += this.HomeViewModel_StartDeletingData;
+            HomeViewModel.RefreshindgData += this.HomeViewModel_RefreshindgData;
+        }
+
+        private void HomeViewModel_RefreshindgData()
+        {
+            if (_selectedTable == String.Empty)
+                return;
+            CreateTable(_selectedTable);
         }
 
         private void HomeViewModel_StartDeletingData()
         {
-            throw new NotImplementedException();
+            if (dataGrid.SelectedItem == null)
+                return;
+            object id = (dataGrid.SelectedItem as DataRowView).Row.ItemArray[0];
+            MainViewModel.GetInstance().ServerContoller.DeleteData(_selectedTable, id);
         }
 
         private void HomeViewModel_StartUpdatingData()
         {
+            if (dataGrid.SelectedItem == null)
+                return;
             object id = (dataGrid.SelectedItem as DataRowView).Row.ItemArray[0];
             List<string> data = new List<string>();
             foreach (var item in inputPanel.Children)
@@ -104,7 +116,5 @@ namespace MSSM_Clone.CustomControls
                 inputPanel.Children.Add(tb);
             }
         }
-
-       
     }
 }

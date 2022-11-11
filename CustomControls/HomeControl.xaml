@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:MSSM_Clone.CustomControls"
+             xmlns:local="clr-namespace:MSSM_Clone.CustomControls" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
@@ -35,7 +35,12 @@
             ToolTip="Resource name: MaterialDesignRaisedButton"
             Content="Delete data"/>
         </StackPanel>
-        
+        <Button Grid.Column="3" Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="10"
+            Style="{StaticResource MaterialDesignFloatingActionSecondaryDarkButton}"
+            ToolTip="MaterialDesignFloatingActionSecondaryDarkButton"
+            Command="{Binding RefreshData}">
+            <materialDesign:PackIcon Kind="Refresh" />
+        </Button>
 
         <StackPanel x:Name="inputPanel" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3">
             
