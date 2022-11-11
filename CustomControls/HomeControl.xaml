@@ -20,12 +20,22 @@
         </Grid.RowDefinitions>
         <ComboBox x:Name="namesComboBox"  VerticalAlignment="Top" Margin="5 5">
         </ComboBox>
-        <DataGrid Grid.RowSpan="2" Grid.Column="1" Grid.ColumnSpan="3" Margin="5 5 5 5" x:Name="dataGrid">
-        </DataGrid>
-        <Button Command="{Binding AddData}" Grid.Row="3" VerticalAlignment="Bottom" Margin="10"
+        <DataGrid Grid.RowSpan="2" Grid.Column="1" Grid.ColumnSpan="3" Margin="5 5 5 5" x:Name="dataGrid" />
+        <StackPanel Grid.Row="3">
+            <Button Command="{Binding AddData}"  Margin="10"
             Style="{StaticResource MaterialDesignRaisedButton}"
             ToolTip="Resource name: MaterialDesignRaisedButton"
             Content="Add data"/>
+            <Button Command="{Binding UpdateData}" Margin="10"
+            Style="{StaticResource MaterialDesignRaisedButton}"
+            ToolTip="Resource name: MaterialDesignRaisedButton"
+            Content="Update data"/>
+            <Button Command="{Binding DeleteData}" Margin="10"
+            Style="{StaticResource MaterialDesignRaisedButton}"
+            ToolTip="Resource name: MaterialDesignRaisedButton"
+            Content="Delete data"/>
+        </StackPanel>
+        
 
         <StackPanel x:Name="inputPanel" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3">
             

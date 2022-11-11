@@ -26,5 +26,7 @@ namespace MSSM_Clone.View
             InitializeComponent();
             this.DataContext = MainViewModel.GetInstance();
         }
+
+      
     }
 }

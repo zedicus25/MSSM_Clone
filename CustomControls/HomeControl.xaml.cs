@@ -1,6 +1,7 @@
 ﻿using MSSM_Clone.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -23,11 +24,30 @@ namespace MSSM_Clone.CustomControls
     public partial class HomeControl : UserControl
     {
         private string _selectedTable;
+        private string _lastTable;
         public HomeControl()
         {
             InitializeComponent();
             CreateCombox();
             HomeViewModel.StartAddingData += this.HomeControl_StartAddingData;
+            HomeViewModel.StartUpdatingData += this.HomeViewModel_StartUpdatingData;
+            HomeViewModel.StartDeletingData += this.HomeViewModel_StartDeletingData;
+        }
+
+        private void HomeViewModel_StartDeletingData()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void HomeViewModel_StartUpdatingData()
+        {
+            object id = (dataGrid.SelectedItem as DataRowView).Row.ItemArray[0];
+            List<string> data = new List<string>();
+            foreach (var item in inputPanel.Children)
+            {
+                data.Add((item as TextBox).Text);
+            }
+            MainViewModel.GetInstance().ServerContoller.Update(_selectedTable, id, data);
         }
 
         private void HomeControl_StartAddingData()
@@ -65,21 +85,10 @@ namespace MSSM_Clone.CustomControls
 
         private void CreateTable(string table)
         {
-            dataGrid.Columns.Clear();
             dataGrid.IsReadOnly = true;
-            dataGrid.AutoGenerateColumns = false;
-            var data = MainViewModel.GetInstance().ServerContoller.GetFieldsData(table);
-            var names = MainViewModel.GetInstance().ServerContoller.GetFieldsName(table);
-
-            for (int j = 0; j < data[0].Count; j++)
-            {
-                DataGridTextColumn column = new DataGridTextColumn();
-                column.Header = names[j];
-                column.Binding = new Binding($"[{j}]");
-                dataGrid.Columns.Add(column);
-            }
-            dataGrid.ItemsSource = data;
-            CreateInputPanel(names);
+            dataGrid.Columns.Clear();
+            dataGrid.ItemsSource = MainViewModel.GetInstance().ServerContoller.GetTable(table).DefaultView;
+            CreateInputPanel(MainViewModel.GetInstance().ServerContoller.GetFieldsName(table));
         }
 
         private void CreateInputPanel(List<string> names)
@@ -95,5 +104,7 @@ namespace MSSM_Clone.CustomControls
                 inputPanel.Children.Add(tb);
             }
         }
+
+       
     }
 }

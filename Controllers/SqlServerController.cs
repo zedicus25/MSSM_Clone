@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Text;
 using System.Windows.Controls;
+using System.Windows.Markup;
 
 namespace MSSM_Clone.Controllers
 {
@@ -12,6 +14,8 @@ namespace MSSM_Clone.Controllers
         private string _connectionPath;
         public static event Action<string> SendMessage;
         public static event Action<bool> ConnectionResult;
+        private DataSet _dataSet;
+        private DataTable _lastTable;
 
         public SqlServerController(string serverName, string dataBaseName)
         {
@@ -66,7 +70,7 @@ namespace MSSM_Clone.Controllers
             }
         }
 
-        public List<List<object>> GetFieldsData(string tableName)
+        /*public List<List<object>> GetFieldsData(string tableName)
         {
             try
             {
@@ -96,7 +100,7 @@ namespace MSSM_Clone.Controllers
                 SendMessage?.Invoke(ex.Message);
             }
             return new List<List<object>>();
-        }
+        }*/
 
         public List<string> GetFieldsName(string tableName)
         {
@@ -125,6 +129,42 @@ namespace MSSM_Clone.Controllers
             return new List<string>();
         }
 
+
+
+        public DataTable GetTable(string tableName)
+        {
+            using (SqlConnection connection = GetSqlConnection())
+            {
+                string command = $"SELECT * FROM [{tableName}]";
+                SqlDataAdapter adapter = new SqlDataAdapter(command, connection);
+                _dataSet = new DataSet();
+                adapter.Fill(_dataSet);
+                _lastTable = _dataSet.Tables[0];
+                return _dataSet.Tables[0];
+            }
+        }
+
+
+        public void Update(string tableName, object id, List<string> data)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionPath))
+            {
+                connection.Open();
+                string command = $"SELECT * FROM [{tableName}]";
+
+                SqlDataAdapter adapter = new SqlDataAdapter(command, connection);
+                DataSet dataSet = new DataSet();
+                adapter.Fill(dataSet);
+                DataTable table = dataSet.Tables[0];
+                DataRow row = table.AsEnumerable().FirstOrDefault(x => x[0].Equals(id));
+                for (int i = 0; i < data.Count; i++)
+                {
+                    row[i] = data[i];
+                }
+                SqlCommandBuilder sqlCommandBuilder = new SqlCommandBuilder(adapter);
+                adapter.Update(dataSet);
+            }
+        }
 
         private void CreateConnectionPath(string serverName, string dataBaseName)
         {
